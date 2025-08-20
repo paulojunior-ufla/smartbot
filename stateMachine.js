@@ -1,10 +1,11 @@
-const { welcomeMessage, byeMessage } = require('./constants');
+const { welcomeMessage, requestPdfMessage, byeMessage } = require('./constants');
 const { normalize } = require('./util');
 
 // Estados possíveis
 const ESTADOS = {
   INICIAL: 'inicial',
   AGUARDANDO_ACEITE_TERMOS: 'aguardando_aceite_termos',
+  AGUARDANDO_ARQUIVO_PDF: 'aguardando_arquivo_pdf',
   ENCERRAMENTO: 'encerramento'
 };
 
@@ -44,8 +45,8 @@ function handleAguardandoAceiteTermos(userId, body, client) {
   const resposta = normalize(body);
   
   if (resposta === '1' || resposta === 'sim') {
-    sendMessageWithDelay(client, userId, 'Ótimo! Você pode começar a usar o SmartBot.');
-    sessoes[userId].estado = ESTADOS.ENCERRAMENTO;
+    sendMessageWithDelay(client, userId, requestPdfMessage);
+    sessoes[userId].estado = ESTADOS.AGUARDANDO_ARQUIVO_PDF;
     sessoes[userId].timeout = null;
   } else if (resposta === '2' || resposta === 'nao' || resposta === 'não') {
     sendMessageWithDelay(client, userId, byeMessage);
@@ -57,8 +58,28 @@ function handleAguardandoAceiteTermos(userId, body, client) {
   }
 }
 
+// Handler para aguardando arquivo PDF
+function handleAguardandoArquivoPdf(userId, body, client, message) {
+  const sessao = sessoes[userId];
+  
+  if (sessao.timeout) clearTimeout(sessao.timeout);
+  
+  // Verifica se a mensagem tem anexo
+  if (message.hasMedia) {
+    const media = message.downloadMedia();
+    // Aqui você pode processar o arquivo PDF
+    sendMessageWithDelay(client, userId, '✅ Arquivo recebido! Processando seu material...');
+    // TODO: Implementar processamento do PDF
+    sessoes[userId].estado = ESTADOS.ENCERRAMENTO;
+    sessoes[userId].timeout = null;
+  } else {
+    sendMessageWithDelay(client, userId, '📄 Por favor, envie um arquivo PDF com o conteúdo didático.');
+    iniciarTimeoutEncerramento(userId, client);
+  }
+}
+
 // Função principal da máquina de estados
-function processMessage(userId, body, client) {
+function processMessage(userId, body, client, message = null) {
   // Se não existe sessão ou sessão expirada, inicia nova sessão
   if (!sessoes[userId] || sessoes[userId].estado === ESTADOS.ENCERRAMENTO) {
     handleEstadoInicial(userId, client);
@@ -70,6 +91,9 @@ function processMessage(userId, body, client) {
   switch (sessao.estado) {
     case ESTADOS.AGUARDANDO_ACEITE_TERMOS:
       handleAguardandoAceiteTermos(userId, body, client);
+      break;
+    case ESTADOS.AGUARDANDO_ARQUIVO_PDF:
+      handleAguardandoArquivoPdf(userId, body, client, message);
       break;
     default:
       // Estado não reconhecido, reinicia

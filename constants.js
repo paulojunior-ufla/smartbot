@@ -15,6 +15,15 @@ Deseja continuar?
 1 - Sim
 2 - Não`;
 
+const requestPdfMessage = `✅ *Ótimo! Você aceitou os termos de uso.*
+
+📋 Agora, por favor, envie o arquivo com o conteúdo didático para o qual você quer ajuda:
+• Formato: PDF apenas 
+• Tamanho máximo: 10MB
+• Conteúdo: Material que você deseja estudar
+
+📎 *Anexe seu arquivo PDF agora!*`;
+
 const byeMessage = '👋 Até logo! Estarei aqui novamente quando precisar.';
 
-module.exports = { welcomeMessage, byeMessage };
+module.exports = { welcomeMessage, requestPdfMessage, byeMessage };
