@@ -14,7 +14,7 @@ const sessoes = {};
 
 // Função auxiliar para enviar mensagem com delay aleatório
 function sendMessageWithDelay(client, userId, message) {
-  const delay = Math.floor(Math.random() * (10000 - 2000 + 1)) + 2000; // 2-10 segundos
+  const delay = Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000; // 2-5 segundos
   setTimeout(() => {
     client.sendMessage(userId, message);
   }, delay);
