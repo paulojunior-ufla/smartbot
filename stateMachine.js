@@ -1,4 +1,4 @@
-const { welcomeMessage, requestPdfMessage, byeMessage } = require('./constants');
+const { MESSAGES } = require('./constants');
 const { normalize } = require('./util');
 
 // Estados possíveis
@@ -23,7 +23,7 @@ function sendMessageWithDelay(client, userId, message) {
 // Função auxiliar para iniciar o timeout de encerramento
 function iniciarTimeoutEncerramento(userId, client) {
   sessoes[userId].timeout = setTimeout(() => {
-    sendMessageWithDelay(client, userId, byeMessage);
+    sendMessageWithDelay(client, userId, MESSAGES.bye);
     sessoes[userId].estado = ESTADOS.ENCERRAMENTO;
     sessoes[userId].timeout = null;
   }, 2 * 60 * 1000);
@@ -32,7 +32,7 @@ function iniciarTimeoutEncerramento(userId, client) {
 // Handler para estado inicial/encerramento
 function handleEstadoInicial(userId, client) {
   sessoes[userId] = { estado: ESTADOS.AGUARDANDO_ACEITE_TERMOS, timeout: null };
-  sendMessageWithDelay(client, userId, welcomeMessage);
+  sendMessageWithDelay(client, userId, MESSAGES.welcome);
   iniciarTimeoutEncerramento(userId, client);
 }
 
@@ -45,15 +45,15 @@ function handleAguardandoAceiteTermos(userId, body, client) {
   const resposta = normalize(body);
   
   if (resposta === '1' || resposta === 'sim') {
-    sendMessageWithDelay(client, userId, requestPdfMessage);
+    sendMessageWithDelay(client, userId, MESSAGES.requestPdf);
     sessoes[userId].estado = ESTADOS.AGUARDANDO_ARQUIVO_PDF;
     sessoes[userId].timeout = null;
   } else if (resposta === '2' || resposta === 'nao' || resposta === 'não') {
-    sendMessageWithDelay(client, userId, byeMessage);
+    sendMessageWithDelay(client, userId, MESSAGES.bye);
     sessoes[userId].estado = ESTADOS.ENCERRAMENTO;
     sessoes[userId].timeout = null;
   } else {
-    sendMessageWithDelay(client, userId, 'Por favor, responda com "1" para Sim ou "2" para Não.');
+    sendMessageWithDelay(client, userId, MESSAGES.invalidResponse);
     iniciarTimeoutEncerramento(userId, client);
   }
 }
@@ -68,12 +68,12 @@ function handleAguardandoArquivoPdf(userId, body, client, message) {
   if (message.hasMedia) {
     const media = message.downloadMedia();
     // Aqui você pode processar o arquivo PDF
-    sendMessageWithDelay(client, userId, '✅ Arquivo recebido! Processando seu material...');
+    sendMessageWithDelay(client, userId, MESSAGES.fileReceived);
     // TODO: Implementar processamento do PDF
     sessoes[userId].estado = ESTADOS.ENCERRAMENTO;
     sessoes[userId].timeout = null;
   } else {
-    sendMessageWithDelay(client, userId, '📄 Por favor, envie um arquivo PDF com o conteúdo didático.');
+    sendMessageWithDelay(client, userId, MESSAGES.requestPdfOnly);
     iniciarTimeoutEncerramento(userId, client);
   }
 }
