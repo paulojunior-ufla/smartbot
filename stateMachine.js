@@ -12,6 +12,13 @@ const ESTADOS = {
 // Sessões dos usuários
 const sessoes = {};
 
+// Função para encerrar e limpar a sessão do usuário
+function encerrarSessao(userId) {
+  sessoes[userId].estado = ESTADOS.ENCERRAMENTO;
+  sessoes[userId].timeout = null;
+  // Adicione aqui outros campos que desejar limpar futuramente
+}
+
 // Função auxiliar para enviar mensagem com delay aleatório
 function sendMessageWithDelay(client, userId, message) {
   const delay = Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000; // 2-5 segundos
@@ -24,8 +31,7 @@ function sendMessageWithDelay(client, userId, message) {
 function iniciarTimeoutEncerramento(userId, client) {
   sessoes[userId].timeout = setTimeout(() => {
     sendMessageWithDelay(client, userId, MESSAGES.bye);
-    sessoes[userId].estado = ESTADOS.ENCERRAMENTO;
-    sessoes[userId].timeout = null;
+    encerrarSessao(userId);
   }, 2 * 60 * 1000);
 }
 
@@ -50,8 +56,7 @@ function handleAguardandoAceiteTermos(userId, body, client) {
     sessoes[userId].timeout = null;
   } else if (resposta === '2' || resposta === 'nao' || resposta === 'não') {
     sendMessageWithDelay(client, userId, MESSAGES.bye);
-    sessoes[userId].estado = ESTADOS.ENCERRAMENTO;
-    sessoes[userId].timeout = null;
+    encerrarSessao(userId);
   } else {
     sendMessageWithDelay(client, userId, MESSAGES.invalidResponse);
     iniciarTimeoutEncerramento(userId, client);
@@ -70,8 +75,7 @@ function handleAguardandoArquivoPdf(userId, body, client, message) {
     // Aqui você pode processar o arquivo PDF
     sendMessageWithDelay(client, userId, MESSAGES.fileReceived);
     // TODO: Implementar processamento do PDF
-    sessoes[userId].estado = ESTADOS.ENCERRAMENTO;
-    sessoes[userId].timeout = null;
+    encerrarSessao(userId);
   } else {
     sendMessageWithDelay(client, userId, MESSAGES.requestPdfOnly);
     iniciarTimeoutEncerramento(userId, client);
