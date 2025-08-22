@@ -28,7 +28,18 @@ Deseja continuar?
   invalidResponse: 'Por favor, responda com "1" para Sim ou "2" para Não.',
   fileReceived: '✅ Arquivo recebido! Processando seu material...',
   requestPdfOnly: '📄 Por favor, envie um arquivo PDF com o conteúdo didático.',
-  bye: '👋 Até logo! Estarei aqui novamente quando precisar.'
+  bye: '👋 Até logo! Estarei aqui novamente quando precisar.',
+  pdfProcessError: '❌ Erro ao processar o PDF.',
+
+  afterPdfProcessed: `✅ *Arquivo processado com sucesso!*
+
+Agora, escolha o que deseja fazer com o conteúdo:
+
+1 - Gerar um resumo
+2 - Gerar um roteiro de estudo
+3 - Gerar um quiz
+4 - Enviar um novo arquivo
+5 - Voltar para o início`,
 };
 
 module.exports = { MESSAGES };

@@ -1,3 +1,5 @@
+const fs = require('fs');
+const pdf = require('pdf-parse');
 const { MESSAGES } = require('./constants');
 const { normalize } = require('./util');
 
@@ -45,11 +47,11 @@ function handleEstadoInicial(userId, client) {
 // Handler para aguardando aceite dos termos
 function handleAguardandoAceiteTermos(userId, body, client) {
   const sessao = sessoes[userId];
-  
+
   if (sessao.timeout) clearTimeout(sessao.timeout);
-  
+
   const resposta = normalize(body);
-  
+
   if (resposta === '1' || resposta === 'sim') {
     sendMessageWithDelay(client, userId, MESSAGES.requestPdf);
     sessoes[userId].estado = ESTADOS.AGUARDANDO_ARQUIVO_PDF;
@@ -66,16 +68,34 @@ function handleAguardandoAceiteTermos(userId, body, client) {
 // Handler para aguardando arquivo PDF
 function handleAguardandoArquivoPdf(userId, body, client, message) {
   const sessao = sessoes[userId];
-  
+
   if (sessao.timeout) clearTimeout(sessao.timeout);
-  
+
   // Verifica se a mensagem tem anexo
   if (message.hasMedia) {
-    const media = message.downloadMedia();
-    // Aqui você pode processar o arquivo PDF
-    sendMessageWithDelay(client, userId, MESSAGES.fileReceived);
-    // TODO: Implementar processamento do PDF
-    encerrarSessao(userId);
+    message.downloadMedia()
+      .then(async (media) => {
+        if (media.mimetype === 'application/pdf') {
+          const dataBuffer = Buffer.from(media.data, 'base64');
+          pdf(dataBuffer).then(function (data) {
+            console.log(`Texto extraído do PDF: ${data.text.slice(0, 500)}`);
+            sendMessageWithDelay(client, userId, MESSAGES.afterPdfProcessed);
+            encerrarSessao(userId);
+          }).catch((err) => {
+            console.log(`err: ${err.message}`);
+            sendMessageWithDelay(client, userId, MESSAGES.pdfProcessError);
+            encerrarSessao(userId);
+          });
+        } else {
+          sendMessageWithDelay(client, userId, MESSAGES.requestPdfOnly);
+          iniciarTimeoutEncerramento(userId, client);
+        }
+      })
+      .catch((err) => {
+        console.log(`err: ${err.message}`);
+        sendMessageWithDelay(client, userId, MESSAGES.pdfProcessError);
+        encerrarSessao(userId);
+      });
   } else {
     sendMessageWithDelay(client, userId, MESSAGES.requestPdfOnly);
     iniciarTimeoutEncerramento(userId, client);
