@@ -1,6 +1,8 @@
+
 const fs = require('fs');
 const pdf = require('pdf-parse');
-const { MESSAGES } = require('./constants');
+const { MESSAGES, PROMPTS } = require('./constants');
+const { get_results } = require('./ia_gen');
 const { normalize } = require('./util');
 
 // Estados possíveis
@@ -26,9 +28,12 @@ function encerrarSessao(userId) {
 // Função auxiliar para enviar mensagem com delay aleatório
 function sendMessageWithDelay(client, userId, message) {
   const delay = Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000; // 2-5 segundos
-  setTimeout(() => {
-    client.sendMessage(userId, message);
-  }, delay);
+  return new Promise((resolve) => {
+    setTimeout(async () => {
+      await client.sendMessage(userId, message);
+      resolve();
+    }, delay);
+  });
 }
 
 // Função auxiliar para iniciar o timeout de encerramento
@@ -105,17 +110,32 @@ function handleAguardandoArquivoPdf(userId, body, client, message) {
   }
 }
 
+// Função para gerar resumo usando IA
+async function gerarResumo(userId, client, sessao) {
+  try {
+    const prompt = `${PROMPTS.summary}\n\nConteúdo da aula:\n${sessao.content}`;
+    const resultado = await get_results(prompt);
+    await sendMessageWithDelay(client, userId, `${resultado}`);
+    sendMessageWithDelay(client, userId, MESSAGES.afterPdfProcessed);
+    sessoes[userId].estado = ESTADOS.AGUARDANDO_ACAO_CONTEUDO;
+    iniciarTimeoutEncerramento(userId, client);     
+  } catch (err) {
+    sendMessageWithDelay(client, userId, MESSAGES.contentGeneratedError);
+    encerrarSessao(userId);
+  }
+  encerrarSessao(userId);
+}
+
 // Handler para aguardando ação sobre o conteúdo
-function handleAguardandoAcaoConteudo(userId, body, client) {
+async function handleAguardandoAcaoConteudo(userId, body, client) {
   const sessao = sessoes[userId];
   if (sessao.timeout) clearTimeout(sessao.timeout);
   // Aqui você pode tratar as opções do usuário (1 a 5)
   const resposta = normalize(body);
   switch (resposta) {
     case '1':
-      sendMessageWithDelay(client, userId, '🔎 Gerando resumo do conteúdo...');
-      // TODO: Implementar geração de resumo usando sessao.content
-      encerrarSessao(userId);
+      await sendMessageWithDelay(client, userId, '🔎 Gerando resumo do conteúdo...');
+      gerarResumo(userId, client, sessao);
       break;
     case '2':
       sendMessageWithDelay(client, userId, '📝 Gerando roteiro de estudo...');

@@ -30,6 +30,7 @@ Deseja continuar?
   requestPdfOnly: '📄 Por favor, envie um arquivo PDF com o conteúdo didático.',
   bye: '👋 Até logo! Estarei aqui novamente quando precisar.',
   pdfProcessError: '❌ Erro ao processar o PDF.',
+  contentGeneratedError: '❌ Erro ao gerar conteúdo.',
 
   afterPdfProcessed: `✅ *Arquivo processado com sucesso!*
 
@@ -42,4 +43,8 @@ Agora, escolha o que deseja fazer agora com o conteúdo:
 5 - Encerrar`,
 };
 
-module.exports = { MESSAGES };
+const PROMPTS = {
+  summary: `Com base no conteúdo da aula a seguir, escreva um resumo simples, destacando os principais conceitos abordados de forma objetiva e clara para um aluno de graduação. Retorne o resumo em texto plano, sem formatação.`
+};
+
+module.exports = { MESSAGES, PROMPTS };
