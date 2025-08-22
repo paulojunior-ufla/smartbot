@@ -8,6 +8,7 @@ const ESTADOS = {
   INICIAL: 'inicial',
   AGUARDANDO_ACEITE_TERMOS: 'aguardando_aceite_termos',
   AGUARDANDO_ARQUIVO_PDF: 'aguardando_arquivo_pdf',
+  AGUARDANDO_ACAO_CONTEUDO: 'aguardando_acao_conteudo',
   ENCERRAMENTO: 'encerramento'
 };
 
@@ -18,6 +19,7 @@ const sessoes = {};
 function encerrarSessao(userId) {
   sessoes[userId].estado = ESTADOS.ENCERRAMENTO;
   sessoes[userId].timeout = null;
+  sessoes[userId].content = null;
   // Adicione aqui outros campos que desejar limpar futuramente
 }
 
@@ -55,7 +57,7 @@ function handleAguardandoAceiteTermos(userId, body, client) {
   if (resposta === '1' || resposta === 'sim') {
     sendMessageWithDelay(client, userId, MESSAGES.requestPdf);
     sessoes[userId].estado = ESTADOS.AGUARDANDO_ARQUIVO_PDF;
-    sessoes[userId].timeout = null;
+    iniciarTimeoutEncerramento(userId, client);
   } else if (resposta === '2' || resposta === 'nao' || resposta === 'não') {
     sendMessageWithDelay(client, userId, MESSAGES.bye);
     encerrarSessao(userId);
@@ -78,9 +80,10 @@ function handleAguardandoArquivoPdf(userId, body, client, message) {
         if (media.mimetype === 'application/pdf') {
           const dataBuffer = Buffer.from(media.data, 'base64');
           pdf(dataBuffer).then(function (data) {
-            console.log(`Texto extraído do PDF: ${data.text.slice(0, 500)}`);
+            sessoes[userId].content = data.text;
             sendMessageWithDelay(client, userId, MESSAGES.afterPdfProcessed);
-            encerrarSessao(userId);
+            sessoes[userId].estado = ESTADOS.AGUARDANDO_ACAO_CONTEUDO;
+            iniciarTimeoutEncerramento(userId, client);
           }).catch((err) => {
             console.log(`err: ${err.message}`);
             sendMessageWithDelay(client, userId, MESSAGES.pdfProcessError);
@@ -102,6 +105,44 @@ function handleAguardandoArquivoPdf(userId, body, client, message) {
   }
 }
 
+// Handler para aguardando ação sobre o conteúdo
+function handleAguardandoAcaoConteudo(userId, body, client) {
+  const sessao = sessoes[userId];
+  if (sessao.timeout) clearTimeout(sessao.timeout);
+  // Aqui você pode tratar as opções do usuário (1 a 5)
+  const resposta = normalize(body);
+  switch (resposta) {
+    case '1':
+      sendMessageWithDelay(client, userId, '🔎 Gerando resumo do conteúdo...');
+      // TODO: Implementar geração de resumo usando sessao.content
+      encerrarSessao(userId);
+      break;
+    case '2':
+      sendMessageWithDelay(client, userId, '📝 Gerando roteiro de estudo...');
+      // TODO: Implementar geração de roteiro usando sessao.content
+      encerrarSessao(userId);
+      break;
+    case '3':
+      sendMessageWithDelay(client, userId, '❓ Gerando quiz...');
+      // TODO: Implementar geração de quiz usando sessao.content
+      encerrarSessao(userId);
+      break;
+    case '4':
+      sendMessageWithDelay(client, userId, MESSAGES.requestPdf);
+      sessao.estado = ESTADOS.AGUARDANDO_ARQUIVO_PDF;
+      iniciarTimeoutEncerramento(userId, client);
+      break;
+    case '5':
+      sendMessageWithDelay(client, userId, MESSAGES.bye);
+      encerrarSessao(userId);
+      break;
+    default:
+      sendMessageWithDelay(client, userId, 'Por favor, escolha uma opção válida (1 a 5).');
+      iniciarTimeoutEncerramento(userId, client);
+      break;
+  }
+}
+
 // Função principal da máquina de estados
 function processMessage(userId, body, client, message = null) {
   // Se não existe sessão ou sessão expirada, inicia nova sessão
@@ -118,6 +159,9 @@ function processMessage(userId, body, client, message = null) {
       break;
     case ESTADOS.AGUARDANDO_ARQUIVO_PDF:
       handleAguardandoArquivoPdf(userId, body, client, message);
+      break;
+    case ESTADOS.AGUARDANDO_ACAO_CONTEUDO:
+      handleAguardandoAcaoConteudo(userId, body, client);
       break;
     default:
       // Estado não reconhecido, reinicia

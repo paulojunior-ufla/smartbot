@@ -33,13 +33,13 @@ Deseja continuar?
 
   afterPdfProcessed: `✅ *Arquivo processado com sucesso!*
 
-Agora, escolha o que deseja fazer com o conteúdo:
+Agora, escolha o que deseja fazer agora com o conteúdo:
 
 1 - Gerar um resumo
 2 - Gerar um roteiro de estudo
 3 - Gerar um quiz
 4 - Enviar um novo arquivo
-5 - Voltar para o início`,
+5 - Encerrar`,
 };
 
 module.exports = { MESSAGES };
