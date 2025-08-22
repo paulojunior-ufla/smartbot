@@ -123,7 +123,6 @@ async function gerarResumo(userId, client, sessao) {
     sendMessageWithDelay(client, userId, MESSAGES.contentGeneratedError);
     encerrarSessao(userId);
   }
-  encerrarSessao(userId);
 }
 
 // Handler para aguardando ação sobre o conteúdo
