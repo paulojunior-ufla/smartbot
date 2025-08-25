@@ -45,6 +45,13 @@ Agora, escolha o que deseja fazer agora com o conteúdo:
 
 const PROMPTS = {
   summary: `Escreva um resumo simples e direto do conteúdo da aula a seguir. O tom deve ser claro e acessível, considerando estudantes de graduação. Use formatação compatível com WhatsApp, seguindo estas regras: destaque títulos ou conceitos importantes em negrito, separe as ideias principais com quebras de linha curtas e não use tópicos nem listas longas.`
+  ,
+  studyGuide: `Com base no conteúdo da aula a seguir, escreva um roteiro de estudo para esta aula, contendo:
+* Tema principal
+* Objetivos do texto
+* Assuntos que precisam ser aprendidos
+* O que o estudante deve ser capaz de saber após a leitura
+Retorne o roteiro de estudo em texto compatível com WhatsApp, seguindo estas regras: destaque títulos ou conceitos importantes em negrito, separe as ideias principais com quebras de linha curtas e não use tópicos nem listas longas.`
 };
 
 module.exports = { MESSAGES, PROMPTS };

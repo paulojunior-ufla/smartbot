@@ -111,14 +111,13 @@ function handleAguardandoArquivoPdf(userId, body, client, message) {
 }
 
 // Função para gerar resumo usando IA
-async function gerarResumo(userId, client, sessao) {
+async function generateContent(userId, client, sessao, prompt) {
   try {
-    const prompt = `${PROMPTS.summary}\n\nConteúdo da aula:\n${sessao.content}`;
     const resultado = await get_results(prompt);
     await sendMessageWithDelay(client, userId, `${resultado}`);
     sendMessageWithDelay(client, userId, MESSAGES.afterPdfProcessed);
     sessoes[userId].estado = ESTADOS.AGUARDANDO_ACAO_CONTEUDO;
-    iniciarTimeoutEncerramento(userId, client);     
+    iniciarTimeoutEncerramento(userId, client);
   } catch (err) {
     sendMessageWithDelay(client, userId, MESSAGES.contentGeneratedError);
     encerrarSessao(userId);
@@ -131,15 +130,17 @@ async function handleAguardandoAcaoConteudo(userId, body, client) {
   if (sessao.timeout) clearTimeout(sessao.timeout);
   // Aqui você pode tratar as opções do usuário (1 a 5)
   const resposta = normalize(body);
+  let prompt = '';
   switch (resposta) {
     case '1':
       await sendMessageWithDelay(client, userId, '🔎 Gerando resumo do conteúdo...');
-      gerarResumo(userId, client, sessao);
+      prompt = `${PROMPTS.summary}\n\nConteúdo da aula:\n${sessao.content}`;
+      generateContent(userId, client, sessao, prompt);
       break;
     case '2':
       sendMessageWithDelay(client, userId, '📝 Gerando roteiro de estudo...');
-      // TODO: Implementar geração de roteiro usando sessao.content
-      encerrarSessao(userId);
+      prompt = `${PROMPTS.studyGuide}\n\nConteúdo da aula:\n${sessao.content}`;
+      generateContent(userId, client, sessao, prompt);
       break;
     case '3':
       sendMessageWithDelay(client, userId, '❓ Gerando quiz...');
