@@ -138,7 +138,7 @@ async function handleAguardandoAcaoConteudo(userId, body, client) {
       generateContent(userId, client, sessao, prompt);
       break;
     case '2':
-      sendMessageWithDelay(client, userId, '📝 Gerando roteiro de estudo...');
+      await sendMessageWithDelay(client, userId, '📝 Gerando roteiro de estudo...');
       prompt = `${PROMPTS.studyGuide}\n\nConteúdo da aula:\n${sessao.content}`;
       generateContent(userId, client, sessao, prompt);
       break;

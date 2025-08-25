@@ -44,7 +44,8 @@ Agora, escolha o que deseja fazer agora com o conteúdo:
 };
 
 const PROMPTS = {
-  summary: `Escreva um resumo simples e direto do conteúdo da aula a seguir. O tom deve ser claro e acessível, considerando estudantes de graduação. Use formatação compatível com WhatsApp, seguindo estas regras: destaque títulos ou conceitos importantes em negrito, separe as ideias principais com quebras de linha curtas e não use tópicos nem listas longas.`
+  summary: `Com base no conteúdo da aula a seguir, escreva um resumo simples e direto, considerando estudantes de graduação. 
+  Retorne o resumo em texto compatível com WhatsApp, seguindo estas regras: destaque títulos ou conceitos importantes em negrito, separe as ideias principais com quebras de linha curtas e não use tópicos nem listas longas.`
   ,
   studyGuide: `Com base no conteúdo da aula a seguir, escreva um roteiro de estudo para esta aula, contendo:
 * Tema principal

@@ -20,6 +20,7 @@ async function get_results(prompt) {
   // Tenta buscar no cache
   const cached = getCache(hash);
   if (cached) {
+    console.log('Resultado obtido do cache.');
     return cached;
   }
 
