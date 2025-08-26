@@ -9,7 +9,7 @@ Sou um chatbot que usa Inteligência Artificial para apoiar seu processo de ensi
 • Desenvolver questionários interativos 
 
 ⚠️ *Importante:* Para usar o SmartBot, você precisa aceitar nossos termos de uso:
-https://smartbot.com/termos-de-uso
+https://github.com/paulojunior-ufla/smartbot/blob/main/terms-of-use.md
 
 Deseja continuar?
 
