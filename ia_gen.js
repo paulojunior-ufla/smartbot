@@ -1,6 +1,4 @@
 const axios = require('axios');
-const crypto = require('crypto');
-const { getCache, setCache } = require('./cache');
 require('dotenv').config();
 
 /**
@@ -12,16 +10,6 @@ async function get_results(prompt) {
   const apiKey = process.env.API_KEY;
   if (!apiKey) {
     throw new Error('API_KEY não encontrada no arquivo .env');
-  }
-
-  // Gera hash do prompt
-  const hash = crypto.createHash('sha256').update(prompt).digest('hex');
-
-  // Tenta buscar no cache
-  const cached = getCache(hash);
-  if (cached) {
-    console.log('Resultado obtido do cache.');
-    return cached;
   }
 
   // Endpoint do Google Gemini
@@ -44,7 +32,6 @@ async function get_results(prompt) {
       response.data.candidates[0].content.parts[0].text
     ) {
       const result = response.data.candidates[0].content.parts[0].text;
-      setCache(hash, result);
       return result;
     }
     return "";
