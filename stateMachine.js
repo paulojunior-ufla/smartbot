@@ -130,22 +130,22 @@ async function handleAguardandoAcaoConteudo(userId, body, client) {
   if (sessao.timeout) clearTimeout(sessao.timeout);
   // Aqui você pode tratar as opções do usuário (1 a 5)
   const resposta = normalize(body);
-  let prompt = '';
+  let prompt = `\n\nTipo de formatação: ${PROMPTS.wppStyle}\n\nConteúdo da aula:\n${sessao.content}`;
   switch (resposta) {
     case '1':
       await sendMessageWithDelay(client, userId, '🔎 Gerando resumo do conteúdo...');
-      prompt = `${PROMPTS.summary}\n\nConteúdo da aula:\n${sessao.content}`;
+      prompt = `${PROMPTS.summary}${prompt}`;
       generateContent(userId, client, sessao, prompt);
       break;
     case '2':
       await sendMessageWithDelay(client, userId, '📝 Gerando roteiro de estudo...');
-      prompt = `${PROMPTS.studyGuide}\n\nConteúdo da aula:\n${sessao.content}`;
+      prompt = `${PROMPTS.studyGuide}${prompt}`;
       generateContent(userId, client, sessao, prompt);
       break;
     case '3':
-      sendMessageWithDelay(client, userId, '❓ Gerando quiz...');
-      // TODO: Implementar geração de quiz usando sessao.content
-      encerrarSessao(userId);
+      await sendMessageWithDelay(client, userId, '❓ Gerando quiz...');
+      prompt = `${PROMPTS.quiz}${prompt}`;
+      generateContent(userId, client, sessao, prompt);
       break;
     case '4':
       sendMessageWithDelay(client, userId, MESSAGES.requestPdf);

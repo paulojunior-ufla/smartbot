@@ -44,15 +44,10 @@ Agora, escolha o que deseja fazer agora com o conteúdo:
 };
 
 const PROMPTS = {
-  summary: `Com base no conteúdo da aula a seguir, escreva um resumo simples e direto, considerando estudantes de graduação. 
-  Retorne o resumo em texto compatível com WhatsApp, seguindo estas regras: destaque títulos ou conceitos importantes em negrito, separe as ideias principais com quebras de linha curtas e não use tópicos nem listas longas.`
-  ,
-  studyGuide: `Com base no conteúdo da aula a seguir, escreva um roteiro de estudo para esta aula, contendo:
-* Tema principal
-* Objetivos do texto
-* Assuntos que precisam ser aprendidos
-* O que o estudante deve ser capaz de saber após a leitura
-Retorne o roteiro de estudo em texto compatível com WhatsApp, seguindo estas regras: destaque títulos ou conceitos importantes em negrito, separe as ideias principais com quebras de linha curtas e não use tópicos nem listas longas.`
+  wppStyle: `Formate o texto gerado usando o estilo de formatação do WhatsApp, onde asteriscos (*) deixam palavras ou frases em negrito e underscores (_) deixam em itálico. Não use listas numeradas ou com marcadores. `,
+  summary: `Com base no conteúdo da aula a seguir, escreva um resumo simples contendo no máximo 10 sentenças. `,
+  studyGuide: `Com base no conteúdo da aula a seguir, escreva um roteiro de estudo, contendo: tema principal, objetivos do texto, assuntos que precisam ser aprendidos e o que o estudante deve ser capaz de saber após a leitura. `,
+  quiz: `Com base no conteúdo da aula a seguir, elabore um quiz com 5 perguntas de múltipla escolha, cada uma com 4 opções (A, B, C, D). Ao final, forneça as respostas corretas para cada pergunta separadamente. `
 };
 
 module.exports = { MESSAGES, PROMPTS };
