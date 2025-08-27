@@ -46,7 +46,7 @@ function iniciarTimeoutEncerramento(userId, client) {
 
 // Handler para estado inicial/encerramento
 function handleEstadoInicial(userId, client) {
-  sessoes[userId] = { estado: ESTADOS.AGUARDANDO_ACEITE_TERMOS, timeout: null };
+  sessoes[userId] = { estado: ESTADOS.AGUARDANDO_ACEITE_TERMOS, timeout: null, content: null };
   sendMessageWithDelay(client, userId, MESSAGES.welcome);
   iniciarTimeoutEncerramento(userId, client);
 }

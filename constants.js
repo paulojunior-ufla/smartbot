@@ -44,10 +44,10 @@ Agora, escolha o que deseja fazer agora com o conteúdo:
 };
 
 const PROMPTS = {
-  wppStyle: `Formate o texto gerado usando o estilo de formatação do WhatsApp, onde asteriscos (*) deixam palavras ou frases em negrito e underscores (_) deixam em itálico. Não use listas numeradas ou com marcadores. `,
+  wppStyle: `Formate o texto gerado usando o estilo de formatação do WhatsApp, onde asteriscos (*) deixam palavras ou frases em negrito e underscores (_) deixam em itálico. Não use listas numeradas ou com marcadores. No caso de um quiz, não use formatação nas alternativas. `,
   summary: `Com base no conteúdo da aula a seguir, escreva um resumo simples contendo no máximo 10 sentenças. `,
   studyGuide: `Com base no conteúdo da aula a seguir, escreva um roteiro de estudo, contendo: tema principal, objetivos do texto, assuntos que precisam ser aprendidos e o que o estudante deve ser capaz de saber após a leitura. `,
-  quiz: `Com base no conteúdo da aula a seguir, elabore um quiz com 5 perguntas de múltipla escolha, cada uma com 4 opções (A, B, C, D). Ao final, forneça as respostas corretas para cada pergunta separadamente. `
+  quiz: `Com base no conteúdo da aula a seguir, elabore um quiz com 5 perguntas de múltipla escolha, cada uma com 4 alternativas (A, B, C, D). Diversifique as alternativas corretas de forma balanceada. Ao final, forneça as respostas corretas para cada pergunta separadamente. `
 };
 
 module.exports = { MESSAGES, PROMPTS };
