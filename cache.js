@@ -1,5 +1,6 @@
 const Database = require('better-sqlite3');
 const path = require('path');
+const crypto = require('crypto');
 
 // Cria/conecta ao banco de dados local
 const db = new Database(path.join(__dirname, 'cache.db'));
@@ -12,13 +13,17 @@ db.prepare(`CREATE TABLE IF NOT EXISTS cache (
   timestamp INTEGER NOT NULL
 )`).run();
 
-function setCache(key, value) {
+function setCache(prompt, value) {
   const now = Date.now();
+  const key = crypto.createHash('sha256').update(prompt).digest('hex');
+
   db.prepare(`INSERT OR REPLACE INTO cache (key, value, timestamp) VALUES (?, ?, ?)`)
     .run(key, JSON.stringify(value), now);
 }
 
-function getCache(key) {
+function getCache(prompt) {
+  const key = crypto.createHash('sha256').update(prompt).digest('hex');
+  
   const row = db.prepare(`SELECT value FROM cache WHERE key = ?`).get(key);
   if (!row) return null;
   try {
@@ -28,17 +33,8 @@ function getCache(key) {
   }
 }
 
-function clearCache(key) {
-  db.prepare(`DELETE FROM cache WHERE key = ?`).run(key);
-}
-
-function clearAllCache() {
-  db.prepare(`DELETE FROM cache`).run();
-}
 
 module.exports = {
   setCache,
   getCache,
-  clearCache,
-  clearAllCache
 };

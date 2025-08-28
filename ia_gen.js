@@ -1,5 +1,4 @@
 const axios = require('axios');
-const crypto = require('crypto');
 const { getCache, setCache } = require('./cache');
 require('dotenv').config();
 
@@ -86,15 +85,11 @@ function use_cache() {
  * @returns {Promise<string>} - O resultado gerado pela IA.
  */
 async function get_results(prompt) {
-  if (use_cache()) {
-    // Gera hash do prompt
-    const hash = crypto.createHash('sha256').update(prompt).digest('hex');
 
-    // Verifica se já existe no cache
-    const cached = getCache(hash);
-    if (cached) {
-      return cached;
-    }
+  const cached = use_cache() ? getCache(prompt) : null;
+
+  if (cached) {
+    return cached;
   }
 
   const aiProvider = process.env.AI_PROVIDER || 'external';
@@ -106,7 +101,7 @@ async function get_results(prompt) {
   }
 
   if (use_cache()) {
-    setCache(hash, result);
+    setCache(prompt, result);
   }
 
   return result;

@@ -109,7 +109,7 @@ function handleAguardandoArquivoPdf(userId, body, client, message) {
 }
 
 // Função para gerar resumo usando IA
-async function generateContent(userId, client, sessao, prompt) {
+async function generateContent(userId, client, prompt) {
   try {
     const resultado = await get_results(prompt);
     await sendMessageWithDelay(client, userId, `${resultado}`);
@@ -117,6 +117,7 @@ async function generateContent(userId, client, sessao, prompt) {
     sessoes[userId].estado = ESTADOS.AGUARDANDO_ACAO_CONTEUDO;
     iniciarTimeoutEncerramento(userId, client);
   } catch (err) {
+    console.log(`err: ${err.message}`);
     sendMessageWithDelay(client, userId, MESSAGES.contentGeneratedError);
     encerrarSessao(userId);
   }
@@ -133,17 +134,17 @@ async function handleAguardandoAcaoConteudo(userId, body, client) {
     case '1':
       await sendMessageWithDelay(client, userId, '🔎 Gerando resumo do conteúdo...');
       prompt = `${PROMPTS.summary}${prompt}`;
-      generateContent(userId, client, sessao, prompt);
+      generateContent(userId, client, prompt);
       break;
     case '2':
       await sendMessageWithDelay(client, userId, '📝 Gerando roteiro de estudo...');
       prompt = `${PROMPTS.studyGuide}${prompt}`;
-      generateContent(userId, client, sessao, prompt);
+      generateContent(userId, client, prompt);
       break;
     case '3':
       await sendMessageWithDelay(client, userId, '❓ Gerando quiz...');
       prompt = `${PROMPTS.quiz}${prompt}`;
-      generateContent(userId, client, sessao, prompt);
+      generateContent(userId, client, prompt);
       break;
     case '4':
       sendMessageWithDelay(client, userId, MESSAGES.requestPdf);
