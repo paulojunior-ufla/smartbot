@@ -9,7 +9,7 @@ Sou um chatbot que usa Inteligência Artificial para apoiar seu processo de ensi
 • Desenvolver questionários interativos 
 
 ⚠️ *Importante:* Para usar o SmartBot, você precisa aceitar nossos termos de uso:
-https://github.com/paulojunior-ufla/smartbot/blob/main/terms-of-use.md
+https://drive.google.com/file/d/1j2i81xGqAp7FJbOmKEvwcyRdHrZapG4g
 
 Deseja continuar?
 
@@ -44,10 +44,10 @@ Agora, escolha o que deseja fazer agora com o conteúdo:
 };
 
 const PROMPTS = {
-  wppStyle: `Formate o texto gerado usando o estilo de formatação do WhatsApp. `,
-  summary: `Com base no conteúdo da aula a seguir, escreva um resumo simples contendo no máximo 10 sentenças. `,
-  studyGuide: `Com base no conteúdo da aula a seguir, escreva um roteiro de estudo, contendo tema principal, objetivos do texto e o que o estudante deve ser capaz de saber após a leitura. `,
-  quiz: `Com base no conteúdo da aula a seguir, elabore um quiz com 5 perguntas de múltipla escolha, cada uma com 4 alternativas (A, B, C, D), sem indicar qual é a alternativa correta. Ao final, forneça o gabarito separadamente. `
+  wppStyle: `Formate o texto gerado usando o estilo de formatação do WhatsApp.`,
+  summary: `Com base no conteúdo da aula a seguir, escreva um resumo simples contendo no máximo 10 sentenças.`,
+  studyGuide: `Com base no conteúdo da aula a seguir, escreva um roteiro de estudo, contendo tema principal, objetivos do texto e o que o estudante deve ser capaz de saber após a leitura.`,
+  quiz: `Com base no conteúdo da aula a seguir, elabore um quiz com 5 perguntas de múltipla escolha, cada uma com 4 alternativas (A, B, C, D), de acordo com o exemplo a seguir:\n\n1. Qual é a capital da França?\nA) Berlim\nB) Madrid\nC) Paris\nD) Roma.\n\n2. Em que ano o Brasil foi descoberto?\nA) 1100\nB) 1600\nC) 1800\nD) 1500.\n\nAo final, apresente as respostas, conforme exemplo a seguir:\n\nGabarito:\n1 - C\n2 - D.`
 };
 
 module.exports = { MESSAGES, PROMPTS };

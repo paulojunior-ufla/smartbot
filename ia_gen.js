@@ -16,7 +16,8 @@ async function get_results_external(prompt, apiKey) {
     }, {
       headers: {
         'Content-Type': 'application/json',
-      }
+      },
+      timeout: 180000 // 180 segundos
     });
 
     if (
@@ -60,7 +61,8 @@ async function get_results_local(prompt, localProviderUrl, localProviderModel) {
     const response = await axios.post(url, payload, {
       headers: {
         'Content-Type': 'application/json',
-      }
+      },
+      timeout: 180000 // 180 segundos
     });
 
     // O Ollama retorna o texto gerado em response.data.message.content

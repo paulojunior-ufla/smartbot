@@ -18,7 +18,6 @@ client.on('message', message => {
   const userId = message.from;
   const body = message.body.trim();
   
-  // Delega o processamento para a máquina de estados
   processMessage(userId, body, client, message);
 });
 
