@@ -1,4 +1,6 @@
 const axios = require('axios');
+const crypto = require('crypto');
+const { getCache, setCache } = require('./cache');
 require('dotenv').config();
 
 /**
@@ -8,9 +10,25 @@ require('dotenv').config();
  */
 async function get_results(prompt) {
   const apiKey = process.env.API_KEY;
+  const useCache = process.env.USE_CACHE;
+
   if (!apiKey) {
     throw new Error('API_KEY não encontrada no arquivo .env');
   }
+
+  if (useCache && useCache.toLowerCase() === 'true') {
+    console.log('Usando cache para respostas da IA');
+
+    // Gera hash do prompt
+    const hash = crypto.createHash('sha256').update(prompt).digest('hex');
+
+    // Verifica se já existe no cache
+    const cached = getCache(hash);
+    if (cached) {
+      return cached;
+    }
+  }
+
 
   // Endpoint do Google Gemini
   const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
@@ -32,6 +50,11 @@ async function get_results(prompt) {
       response.data.candidates[0].content.parts[0].text
     ) {
       const result = response.data.candidates[0].content.parts[0].text;
+      
+      if (useCache && useCache.toLowerCase() === 'true') {
+        setCache(hash, result);
+      }
+      
       return result;
     }
     return "";
