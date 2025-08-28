@@ -90,7 +90,6 @@ function handleAguardandoArquivoPdf(userId, body, client, message) {
             sessoes[userId].estado = ESTADOS.AGUARDANDO_ACAO_CONTEUDO;
             iniciarTimeoutEncerramento(userId, client);
           }).catch((err) => {
-            console.log(`err: ${err.message}`);
             sendMessageWithDelay(client, userId, MESSAGES.pdfProcessError);
             encerrarSessao(userId);
           });
@@ -100,7 +99,6 @@ function handleAguardandoArquivoPdf(userId, body, client, message) {
         }
       })
       .catch((err) => {
-        console.log(`err: ${err.message}`);
         sendMessageWithDelay(client, userId, MESSAGES.pdfProcessError);
         encerrarSessao(userId);
       });
